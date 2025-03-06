@@ -1,0 +1,51 @@
+# Library Management System (Python + MySQL)
+import mysql.connector
+
+# Connect to MySQL Database
+conn = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    password="yourpassword",
+    database="library"
+)
+cursor = conn.cursor()
+
+# Create Books Table
+cursor.execute('''CREATE TABLE IF NOT EXISTS books (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    author VARCHAR(255) NOT NULL,
+    year INT NOT NULL
+)''')
+conn.commit()
+
+# Function to Add a Book
+def add_book(title, author, year):
+    cursor.execute("INSERT INTO books (title, author, year) VALUES (%s, %s, %s)", (title, author, year))
+    conn.commit()
+    print("Book added successfully!")
+
+# Function to View All Books
+def view_books():
+    cursor.execute("SELECT * FROM books")
+    for book in cursor.fetchall():
+        print(book)
+
+# Function to Delete a Book by ID
+def delete_book(book_id):
+    cursor.execute("DELETE FROM books WHERE id = %s", (book_id,))
+    conn.commit()
+    print("Book deleted successfully!")
+
+# Sample Usage
+add_book("The Great Gatsby", "F. Scott Fitzgerald", 1925)
+add_book("1984", "George Orwell", 1949)
+print("Library Collection:")
+view_books()
+delete_book(1)  # Deletes book with ID 1
+print("Updated Library:")
+view_books()
+
+# Close Connection
+cursor.close()
+conn.close()
